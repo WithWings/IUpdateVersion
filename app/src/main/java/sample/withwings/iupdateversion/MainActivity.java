@@ -15,8 +15,9 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.btn_show).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                UpdateVersion.checkLocal(MainActivity.this);
-                UpdateVersion.downApk(MainActivity.this, "");
+                if(!UpdateVersion.checkLocal(MainActivity.this)) {
+                    UpdateVersion.downApk(MainActivity.this, "");
+                }
             }
         });
     }

@@ -18,6 +18,7 @@ import sample.withwings.updateversion.dialog.listener.OnDialogClickListener;
  * 创建：WithWings 时间 2018/2/22
  * Email:wangtong1175@sina.com
  */
+@SuppressWarnings("WeakerAccess")
 public class UpdateVersion {
 
     private static final String SP_KEY = "UpdateVersion";
@@ -34,7 +35,7 @@ public class UpdateVersion {
     /**
      * 检查是否有强制升级需求，防止用户关闭APP，断网重启APP
      * @param activity 界面
-     * @return true 代表有强制升级，并且已经自动弹出升级提示框 false 代表并没有强制升级的需求，完全可以
+     * @return true 代表有强制升级，并且已经自动弹出升级提示框 false 代表并没有强制升级的需求，可以自己检查一下版本是否正确
      */
     public static boolean checkLocal(Activity activity) {
         SharedPreferences sharedPreferences = activity.getSharedPreferences(SP_KEY, Context.MODE_PRIVATE);
@@ -49,10 +50,21 @@ public class UpdateVersion {
         return false;
     }
 
+    /**
+     * 提示用户有新版本更新
+     * @param activity 界面
+     * @param url APK下载路径
+     */
     public static void downApk(Activity activity, String url) {
         downApk(activity, url, false);
     }
 
+    /**
+     * 提示用户有新版本更新
+     * @param activity 界面
+     * @param url APK下载路径
+     * @param must 是否强制更新
+     */
     public static void downApk(Activity activity, String url, boolean must) {
         BaseDialog baseDialog;
         if(must) {
