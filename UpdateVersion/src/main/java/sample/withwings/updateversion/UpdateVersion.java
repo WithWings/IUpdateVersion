@@ -3,18 +3,22 @@ package sample.withwings.updateversion;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
+import android.support.v4.content.FileProvider;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.yanzhenjie.permission.Permission;
 
+import java.io.File;
 import java.util.List;
 
 import sample.withwings.updateversion.andpermission.PermissionUtils;
@@ -45,6 +49,8 @@ public class UpdateVersion {
     private static final String SP_VERSION = "shouldCode";
 
     private static final String SP_URL = "downUrl";
+
+    private static final int REQUEST_FOR_INSTALL = 102;
 
     private static Activity mActivity;
 
@@ -107,7 +113,7 @@ public class UpdateVersion {
         mBaseDialog.setOnDialogClickListener(new MyOnDialogClickListener());
 
         //实例化任务信息对象
-        mInfo = new TaskInfo(FileUtils.getSDCardPath() + "/SinaFQ/Download/", url);
+        mInfo = new TaskInfo(FileUtils.getSDCardPath() + "/SinaFQ/Download", url);
 
         mBaseDialog.show();
     }
@@ -150,7 +156,19 @@ public class UpdateVersion {
                     mBaseDialog.setPositive("暂停");
                     break;
                 case "安装":
-                    Toast.makeText(mActivity, "安装", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(Intent.ACTION_VIEW);
+
+                    //判断是否是AndroidN以及更高的版本
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                        intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                        Uri contentUri = FileProvider.getUriForFile(mActivity, BuildConfig.APPLICATION_ID + ".fileProvider", new File(mInfo.getPath(), mInfo.getName()));
+                        intent.setDataAndType(contentUri, "application/vnd.android.package-archive");
+                    } else {
+                        intent.setDataAndType(Uri.fromFile(new File(mInfo.getPath(), mInfo.getName())), "application/vnd.android.package-archive");
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    }
+                    // 开启B同时还要索要结果：用户可能取消安装等
+                    mActivity.startActivityForResult(intent, REQUEST_FOR_INSTALL);
                     break;
             }
 
