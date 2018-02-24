@@ -139,6 +139,10 @@ public class UpdateVersion {
             }
             if (l >= 100) {//当进度>=100时，取消Handler循环
                 handler.removeCallbacksAndMessages(null);
+                mProgressUtil.dismiss();
+                mProgressUtil = null;
+
+
                 Intent intent = new Intent(Intent.ACTION_VIEW);
 
                 //判断是否是AndroidN以及更高的版本
