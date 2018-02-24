@@ -3,6 +3,7 @@ package sample.withwings.updateversion.dialog;
 import android.content.Context;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import sample.withwings.updateversion.R;
@@ -17,6 +18,7 @@ public class NoticeDialog extends BaseDialog {
     private TextView mTvTitle;
     private TextView mTvMessage;
     private TextView mTvPositive;
+    private ProgressBar mProgressBar;
 
     /**
      * 默认的确认文案
@@ -40,6 +42,7 @@ public class NoticeDialog extends BaseDialog {
         mTvTitle = mDialog.findViewById(R.id.tv_title);
         mTvMessage = mDialog.findViewById(R.id.tv_message);
         mTvPositive = mDialog.findViewById(R.id.tv_positive);
+        mProgressBar = mDialog.findViewById(R.id.progressBar);
 
         setMustSelect(true);
     }
@@ -88,13 +91,30 @@ public class NoticeDialog extends BaseDialog {
     }
 
     @Override
+    public BaseDialog setProgressMax(int max) {
+        mProgressBar.setMax(max);
+        return this;
+    }
+
+    @Override
+    public BaseDialog setProgressVisibility(int visibility) {
+        mProgressBar.setVisibility(visibility);
+        return this;
+    }
+
+    @Override
+    public BaseDialog setProgress(int progress) {
+        mProgressBar.setProgress(progress);
+        return this;
+    }
+
+    @Override
     public void onClick(View v) {
         int i = v.getId();
         if (i == R.id.tv_positive) {
             if (mOnDialogClickListener != null) {
                 mOnDialogClickListener.onPositive(v);
             }
-            mDialog.dismiss();
         }
     }
 }

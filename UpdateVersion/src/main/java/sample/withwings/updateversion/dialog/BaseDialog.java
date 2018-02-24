@@ -64,6 +64,12 @@ public abstract class BaseDialog implements View.OnClickListener, DialogInterfac
 
     public abstract BaseDialog setNegative(String negative);
 
+    public abstract BaseDialog setProgressMax(int max);;
+
+    public abstract BaseDialog setProgressVisibility(int visibility);
+
+    public abstract BaseDialog setProgress(int progress);
+
     public BaseDialog setMustSelect(boolean mustSelect) {
         if (mustSelect) {
             mDialog.setCanceledOnTouchOutside(false);

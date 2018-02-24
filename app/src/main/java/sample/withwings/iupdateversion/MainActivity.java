@@ -16,7 +16,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if(!UpdateVersion.checkLocal(MainActivity.this)) {
-                    UpdateVersion.downApk(MainActivity.this, "");
+                    UpdateVersion.downApk(MainActivity.this, "https://github.com/WithWings/MarkdownUseSrc/blob/master/%E6%96%B0%E6%B5%AA_V1.4.0_RELEASE_140_1_vivo_sign.apk?raw=true");
                 }
             }
         });

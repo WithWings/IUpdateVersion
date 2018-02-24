@@ -5,7 +5,7 @@
     android:layout_width="270dp"
     android:layout_height="wrap_content"
     android:layout_gravity="center"
-    android:background="@drawable/radius_all_white"
+    android:background="@drawable/bg_popup"
     android:gravity="center"
     android:orientation="vertical"
     tools:ignore="SpUsage">
@@ -37,15 +37,6 @@
             android:textSize="15dp"
             tools:text="@string/app_name" />
 
-        <ProgressBar
-            android:id="@+id/progressBar"
-            style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
-            android:max="100"
-            android:visibility="gone" />
-
     </LinearLayout>
 
     <View
@@ -54,7 +45,6 @@
         android:background="#E5E5E5" />
 
     <LinearLayout
-        android:id="@+id/ll_default_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
@@ -64,7 +54,7 @@
             android:layout_width="0dp"
             android:layout_height="46dp"
             android:layout_weight="1"
-            android:background="@drawable/radius_bottom_left"
+            android:background="@drawable/bg_popup_negative"
             android:ellipsize="end"
             android:gravity="center"
             android:maxLines="1"
@@ -82,50 +72,11 @@
             android:layout_width="0dp"
             android:layout_height="46dp"
             android:layout_weight="1"
-            android:background="@drawable/radius_bottom_right"
+            android:background="@drawable/bg_popup_positive"
             android:ellipsize="end"
             android:gravity="center"
             android:maxLines="1"
             android:textColor="#F5A623"
-            android:textSize="16dp"
-            tools:text="@string/app_name" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/ll_new_view"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <TextView
-            android:id="@+id/tv_new_positive"
-            android:layout_width="0dp"
-            android:layout_height="46dp"
-            android:layout_weight="1"
-            android:background="@drawable/radius_bottom_left"
-            android:ellipsize="end"
-            android:gravity="center"
-            android:maxLines="1"
-            android:textColor="#F5A623"
-            android:textSize="16dp"
-            tools:text="@string/app_name" />
-
-        <View
-            android:layout_width="0.5dp"
-            android:layout_height="match_parent"
-            android:background="#E5E5E5" />
-
-        <TextView
-            android:id="@+id/tv_new_negative"
-            android:layout_width="0dp"
-            android:layout_height="46dp"
-            android:layout_weight="1"
-            android:background="@drawable/radius_bottom_right"
-            android:ellipsize="end"
-            android:gravity="center"
-            android:maxLines="1"
-            android:textColor="#666666"
             android:textSize="16dp"
             tools:text="@string/app_name" />
 

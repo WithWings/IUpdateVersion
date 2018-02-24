@@ -3,6 +3,7 @@ package sample.withwings.updateversion.dialog;
 import android.content.Context;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import sample.withwings.updateversion.R;
@@ -18,6 +19,7 @@ public class ControlDialog extends BaseDialog {
     private TextView mTvMessage;
     private TextView mTvNegative;
     private TextView mTvPositive;
+    private ProgressBar mProgressBar;
 
     private static final String POSITIVE_TEXT = "升级";
     private static final String NEGATIVE_TEXT = "取消";
@@ -43,6 +45,7 @@ public class ControlDialog extends BaseDialog {
     protected void initView() {
         mTvTitle = mDialog.findViewById(R.id.tv_title);
         mTvMessage = mDialog.findViewById(R.id.tv_message);
+        mProgressBar = mDialog.findViewById(R.id.progressBar);
         if (mDefaultOrder) {
             mDialog.findViewById(R.id.ll_default_view).setVisibility(View.VISIBLE);
             mDialog.findViewById(R.id.ll_new_view).setVisibility(View.GONE);
@@ -54,6 +57,8 @@ public class ControlDialog extends BaseDialog {
             mTvNegative = mDialog.findViewById(R.id.tv_new_negative);
             mTvPositive = mDialog.findViewById(R.id.tv_new_positive);
         }
+
+        setMustSelect(true);
     }
 
     @Override
@@ -105,6 +110,24 @@ public class ControlDialog extends BaseDialog {
     }
 
     @Override
+    public BaseDialog setProgressMax(int max) {
+        mProgressBar.setMax(max);
+        return this;
+    }
+
+    @Override
+    public BaseDialog setProgressVisibility(int visibility) {
+        mProgressBar.setVisibility(visibility);
+        return this;
+    }
+
+    @Override
+    public BaseDialog setProgress(int progress) {
+        mProgressBar.setProgress(progress);
+        return this;
+    }
+
+    @Override
     public void onClick(View v) {
         int i = v.getId();
         if (i == R.id.tv_negative || i == R.id.tv_new_negative) {
@@ -116,7 +139,6 @@ public class ControlDialog extends BaseDialog {
             if (mOnDialogClickListener != null) {
                 mOnDialogClickListener.onPositive(v);
             }
-            mDialog.dismiss();
         }
     }
 }
