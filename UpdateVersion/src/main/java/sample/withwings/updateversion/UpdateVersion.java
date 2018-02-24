@@ -32,6 +32,8 @@ import sample.withwings.updateversion.down.DownLoadingListener;
 import sample.withwings.updateversion.down.DownloadRunnable;
 import sample.withwings.updateversion.down.info.TaskInfo;
 import sample.withwings.updateversion.utils.FileUtils;
+import sample.withwings.updateversion.utils.ProgressUtil;
+import sample.withwings.updateversion.utils.StatusBarUtils;
 import sample.withwings.updateversion.utils.ToastUtils;
 
 /**
@@ -58,6 +60,8 @@ public class UpdateVersion {
 
     private static TaskInfo mInfo;
     private static DownloadRunnable mRunnable;
+
+    private static ProgressUtil mProgressUtil;
 
     private UpdateVersion() {
     }
@@ -127,10 +131,27 @@ public class UpdateVersion {
             //计算下载进度
             int l = (int) ((float) mInfo.getCompletedLen() / (float) mInfo.getContentLen() * 100);
             //设置进度条进度
-            mBaseDialog.setProgress(l);
+            if(mProgressUtil != null) {
+                mBaseDialog.setProgress(l);
+                mProgressUtil.update(l);
+            } else {
+                handler.removeCallbacksAndMessages(null);
+            }
             if (l >= 100) {//当进度>=100时，取消Handler循环
                 handler.removeCallbacksAndMessages(null);
-                mBaseDialog.setPositive("安装");
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+
+                //判断是否是AndroidN以及更高的版本
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                    Uri contentUri = FileProvider.getUriForFile(mActivity, BuildConfig.APPLICATION_ID + ".fileProvider", new File(mInfo.getPath(), mInfo.getName()));
+                    intent.setDataAndType(contentUri, "application/vnd.android.package-archive");
+                } else {
+                    intent.setDataAndType(Uri.fromFile(new File(mInfo.getPath(), mInfo.getName())), "application/vnd.android.package-archive");
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                }
+                // 开启B同时还要索要结果：用户可能取消安装等
+                mActivity.startActivityForResult(intent, REQUEST_FOR_INSTALL);
             }
             return true;
         }
@@ -155,21 +176,6 @@ public class UpdateVersion {
                     startDown();
                     mBaseDialog.setPositive("暂停");
                     break;
-                case "安装":
-                    Intent intent = new Intent(Intent.ACTION_VIEW);
-
-                    //判断是否是AndroidN以及更高的版本
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                        intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                        Uri contentUri = FileProvider.getUriForFile(mActivity, BuildConfig.APPLICATION_ID + ".fileProvider", new File(mInfo.getPath(), mInfo.getName()));
-                        intent.setDataAndType(contentUri, "application/vnd.android.package-archive");
-                    } else {
-                        intent.setDataAndType(Uri.fromFile(new File(mInfo.getPath(), mInfo.getName())), "application/vnd.android.package-archive");
-                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    }
-                    // 开启B同时还要索要结果：用户可能取消安装等
-                    mActivity.startActivityForResult(intent, REQUEST_FOR_INSTALL);
-                    break;
             }
 
         }
@@ -181,10 +187,9 @@ public class UpdateVersion {
 
         @Override
         public void onDismiss(DialogInterface dialog) {
-            if (mRunnable != null) {
-                //调用DownloadRunnable中的stop方法，停止下载
-                mRunnable.stop();
-                mRunnable = null;//强迫症，不用的对象手动置空
+            if (mRunnable == null && mProgressUtil != null) {
+                mProgressUtil.dismiss();
+                mProgressUtil = null;
             }
             mBaseDialog.setProgressVisibility(View.GONE);
         }
@@ -193,6 +198,7 @@ public class UpdateVersion {
     private static void startDown() {
 
         PermissionUtils.checkPermission(mActivity, 101, SettingDialogUtils.getRationaleDialog(mActivity, ""), new AndPermissionListener() {
+
             @Override
             public void onSucceed(int requestCode, @NonNull List<String> grantPermissions) {
 
@@ -205,6 +211,9 @@ public class UpdateVersion {
 
             @Override
             public void onAllSucceed(int requestCode, @NonNull List<String> grantPermissions) {
+
+                mProgressUtil = StatusBarUtils.showNotificationProgress(mActivity);
+
 
                 mBaseDialog.setProgressMax(100);
                 mBaseDialog.setProgressVisibility(View.VISIBLE);
