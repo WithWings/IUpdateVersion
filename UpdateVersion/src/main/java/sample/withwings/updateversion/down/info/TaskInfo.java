@@ -1,9 +1,15 @@
 package sample.withwings.updateversion.down.info;
 
-public class TaskInfo {
+import java.io.Serializable;
+
+public class TaskInfo implements Serializable {
+
     private String name;//文件名
+
     private String path;//文件路径
+
     private String url;//链接
+
     private long contentLen;//文件总长度
     /**
      * 迄今为止java虚拟机都是以32位作为原子操作，而long与double为64位，当某线程

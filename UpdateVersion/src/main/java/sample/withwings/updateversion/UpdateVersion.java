@@ -131,7 +131,7 @@ public class UpdateVersion {
             //计算下载进度
             int l = (int) ((float) mInfo.getCompletedLen() / (float) mInfo.getContentLen() * 100);
             //设置进度条进度
-            if(mProgressUtil != null) {
+            if (mProgressUtil != null) {
                 mBaseDialog.setProgress(l);
                 mProgressUtil.update(l);
             } else {
@@ -143,23 +143,28 @@ public class UpdateVersion {
                 mProgressUtil = null;
 
 
-                Intent intent = new Intent(Intent.ACTION_VIEW);
-
-                //判断是否是AndroidN以及更高的版本
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                    intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                    Uri contentUri = FileProvider.getUriForFile(mActivity, BuildConfig.APPLICATION_ID + ".fileProvider", new File(mInfo.getPath(), mInfo.getName()));
-                    intent.setDataAndType(contentUri, "application/vnd.android.package-archive");
-                } else {
-                    intent.setDataAndType(Uri.fromFile(new File(mInfo.getPath(), mInfo.getName())), "application/vnd.android.package-archive");
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                }
-                // 开启B同时还要索要结果：用户可能取消安装等
-                mActivity.startActivityForResult(intent, REQUEST_FOR_INSTALL);
+                startInstall();
             }
             return true;
         }
     });
+
+    private static void startInstall() {
+        mBaseDialog.setPositive("安装");
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+
+        //判断是否是AndroidN以及更高的版本
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            Uri contentUri = FileProvider.getUriForFile(mActivity, BuildConfig.APPLICATION_ID + ".fileProvider", new File(mInfo.getPath(), mInfo.getName()));
+            intent.setDataAndType(contentUri, "application/vnd.android.package-archive");
+        } else {
+            intent.setDataAndType(Uri.fromFile(new File(mInfo.getPath(), mInfo.getName())), "application/vnd.android.package-archive");
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        }
+        // 开启B同时还要索要结果：用户可能取消安装等
+        mActivity.startActivityForResult(intent, REQUEST_FOR_INSTALL);
+    }
 
     static class MyOnDialogClickListener implements OnDialogClickListener {
 
@@ -179,6 +184,9 @@ public class UpdateVersion {
                 case "继续":
                     startDown();
                     mBaseDialog.setPositive("暂停");
+                    break;
+                case "安装":
+                    startInstall();
                     break;
             }
 
